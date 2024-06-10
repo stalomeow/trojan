@@ -14,8 +14,8 @@ $ldflags = "-w -s -X 'trojan/trojan.MVersion=$version' -X 'trojan/trojan.BuildDa
 
 echo "Building version $version at $now with Go:$go_version and Git:$git_version"
 
-set GOOS=linux
-set GOARCH=amd64 && go build -ldflags "$ldflags" -o "result/trojan-linux-amd64"
-set GOARCH=arm64 && go build -ldflags "$ldflags" -o "result/trojan-linux-arm64"
+$env:GOOS="linux"
+$env:GOARCH="amd64" && go build -ldflags "$ldflags" -o "result/trojan-linux-amd64"
+$env:GOARCH="arm64" && go build -ldflags "$ldflags" -o "result/trojan-linux-arm64"
 
 Remove-Item -Path "web/templates" -Recurse -Force
