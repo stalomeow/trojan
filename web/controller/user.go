@@ -187,14 +187,14 @@ func ClashSubInfo(c *gin.Context) {
 		pass, _ := base64.StdEncoding.DecodeString(user.Password)
 		if password == string(pass) {
 			var wsData, wsHost string
-			userInfo := fmt.Sprintf("upload=%d, download=%d", user.Upload, user.Download)
+			userInfo := fmt.Sprintf("upload=%d; download=%d", user.Upload, user.Download)
 			if user.Quota != -1 {
-				userInfo = fmt.Sprintf("%s, total=%d", userInfo, user.Quota)
+				userInfo = fmt.Sprintf("%s; total=%d", userInfo, user.Quota)
 			}
 			if user.ExpiryDate != "" {
 				utc, _ := time.LoadLocation("Asia/Shanghai")
 				t, _ := time.ParseInLocation("2006-01-02", user.ExpiryDate, utc)
-				userInfo = fmt.Sprintf("%s, expire=%d", userInfo, t.Unix())
+				userInfo = fmt.Sprintf("%s; expire=%d", userInfo, t.Unix())
 			}
 			c.Header("content-disposition", fmt.Sprintf("attachment; filename=%s", user.Username))
 			c.Header("subscription-userinfo", userInfo)
