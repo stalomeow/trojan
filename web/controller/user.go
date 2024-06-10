@@ -3,12 +3,14 @@ package controller
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/tidwall/gjson"
 	"strconv"
+	"strings"
 	"time"
 	"trojan/core"
 	"trojan/trojan"
+
+	"github.com/gin-gonic/gin"
+	"github.com/tidwall/gjson"
 )
 
 // UserList 获取用户列表
@@ -196,11 +198,17 @@ func ClashSubInfo(c *gin.Context) {
 				t, _ := time.ParseInLocation("2006-01-02", user.ExpiryDate, utc)
 				userInfo = fmt.Sprintf("%s; expire=%d", userInfo, t.Unix())
 			}
-			c.Header("content-disposition", fmt.Sprintf("attachment; filename=%s", user.Username))
-			c.Header("subscription-userinfo", userInfo)
 
+			filename := user.Username
 			domain, port := trojan.GetDomainAndPort()
 			name := fmt.Sprintf("%s:%d", domain, port)
+			if parts := strings.SplitN(user.Username, ";", 2); len(parts) == 2 {
+				filename = parts[0]
+				name = parts[1]
+			}
+			c.Header("content-disposition", fmt.Sprintf("attachment; filename=%s", filename))
+			c.Header("subscription-userinfo", userInfo)
+
 			configData := string(core.Load(""))
 			if gjson.Get(configData, "websocket").Exists() && gjson.Get(configData, "websocket.enabled").Bool() {
 				if gjson.Get(configData, "websocket.host").Exists() {
