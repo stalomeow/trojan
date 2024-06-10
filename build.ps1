@@ -7,9 +7,9 @@ popd
 Remove-Item -Path trojan-web -Recurse -Force
 
 $version = git describe --tags $(git rev-list --tags --max-count=1)
-$now = date -Format "yyyyMMdd-HHmm (UTCK)"
-$go_version = go version | % { $_ -replace "go version ", "" }
-$git_version = git --version | % { $_ -replace "git version ", "" }
+$now = date -Format "yyyy-MM-dd-HH:mm (UTCK)"
+$go_version = go version | % { $_ -replace "go version go", "v" }
+$git_version = git --version | % { $_ -replace "git version ", "v" -replace "\.windows\.1", "" }
 $ldflags = "-w -s -X 'trojan/trojan.MVersion=$version' -X 'trojan/trojan.BuildDate=$now' -X 'trojan/trojan.GoVersion=$go_version' -X 'trojan/trojan.GitVersion=$git_version'"
 
 echo "Building version $version at $now with Go:$go_version and Git:$git_version"
